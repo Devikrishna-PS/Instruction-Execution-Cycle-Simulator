@@ -1,0 +1,383 @@
+<!DOCTYPE html> 
+<html> 
+    <head>
+         <title>Instruction Results</title>
+          <link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}"> 
+          <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+          <link rel="stylesheet" href="{{ url_for('static', filename='css/error-diagnosis.css') }}">>
+           <style>
+           :root {
+               --bg-dark: #0f172a;
+               --panel-dark: #1e293b;
+               --panel-border: rgba(96, 165, 250, 0.25);
+               --text-light: #e2e8f0;
+               --accent: #60a5fa;
+               --accent-strong: #22c55e;
+           }
+
+           body {
+               background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 45%),
+                           radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.12), transparent 35%),
+                           linear-gradient(145deg, #020617, #0b1220);
+               color: var(--text-light);
+               font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+               margin: 0;
+               padding: 0;
+               min-height: 100vh;
+           }
+
+           .results-container {
+               max-width: 1200px;
+               margin: 20px auto 40px;
+               padding: 24px;
+               border-radius: 16px;
+               background: rgba(15, 23, 42, 0.8);
+               border: 1px solid rgba(96, 165, 250, 0.2);
+               box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+               backdrop-filter: blur(6px);
+               animation: fadeIn .7s ease-out;
+           }
+
+           .results-header {
+               text-align: center;
+               margin-bottom: 28px;
+               padding: 26px;
+               background: linear-gradient(135deg, rgba(34, 197, 94, 0.95), rgba(37, 99, 235, 0.9));
+               border-radius: 14px;
+               color: #ffffff;
+               box-shadow: 0 8px 20px rgba(22, 163, 74, 0.35);
+           }
+
+           .results-header h1 {
+               margin: 0;
+               font-size: 2.3rem;
+           }
+
+           .results-header p {
+               margin: 6px 0 0;
+               font-size: 1rem;
+               color: rgba(255, 255, 255, 0.92);
+           }
+
+           .results-grid {
+               display: grid;
+               grid-template-columns: repeat(2, minmax(260px, 1fr));
+               gap: 18px;
+               margin-bottom: 30px;
+           }
+
+           .result-card {
+               background: var(--panel-dark);
+               padding: 20px;
+               border-radius: 14px;
+               box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+               border: 1px solid var(--panel-border);
+               transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+           }
+
+           .result-card:hover {
+               transform: translateY(-4px);
+               box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
+               border-color: rgba(96, 165, 250, 0.42);
+           }
+
+           .result-card h2 {
+               margin-top: 0;
+               margin-bottom: 15px;
+               color: var(--accent);
+               font-size: 1.3rem;
+           }
+
+           .result-card p {
+               margin: 8px 0;
+               font-size: 0.95rem;
+               color: #cbd5e1;
+           }
+
+           .result-card table {
+               width: 100%;
+               border-collapse: collapse;
+               margin-top: 10px;
+           }
+
+           .result-card table th {
+               background: linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(20, 83, 139, 0.5));
+               padding: 10px;
+               text-align: left;
+               font-weight: 600;
+               color: var(--accent);
+               border-bottom: 1px solid rgba(96, 165, 250, 0.34);
+           }
+
+           .result-card table td {
+               padding: 10px;
+               border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+               color: #dbeafe;
+           }
+
+           .result-card table tr:hover td {
+               background: rgba(96, 165, 250, 0.13);
+           }
+
+           .diagnosis-panel {
+               grid-column: 1 / -1;
+           }
+
+           .diagnosis-text {
+               background: rgba(15, 23, 42, 0.85);
+               padding: 12px;
+               border-radius: 10px;
+               font-family: "Courier New", monospace;
+               font-size: 0.9rem;
+               color: #a5b4fc;
+               white-space: pre-wrap;
+               word-wrap: break-word;
+               max-height: 300px;
+               overflow-y: auto;
+               line-height: 1.5;
+           }
+
+           .pipeline-flow {
+               display: flex;
+               justify-content: space-around;
+               align-items: center;
+               margin: 20px 0;
+               padding: 16px;
+               background: linear-gradient(145deg, rgba(14, 165, 233, 0.16), rgba(22, 163, 74, 0.12));
+               border-radius: 12px;
+               border: 1px solid rgba(96, 165, 250, 0.25);
+           }
+
+           .pipeline-stage {
+               text-align: center;
+               padding: 10px 16px;
+               background: rgba(34, 197, 94, 0.2);
+               border-radius: 10px;
+               border-left: 3px solid #22c55e;
+               min-width: 90px;
+               transition: transform 0.2s ease, background 0.2s ease;
+           }
+
+           .pipeline-stage:hover {
+               transform: translateY(-2px);
+               background: rgba(34, 197, 94, 0.25);
+           }
+
+           .pipeline-stage strong {
+               display: block;
+               color: #60a5fa;
+               margin-bottom: 4px;
+               font-size: 0.95rem;
+           }
+
+           .pipeline-stage span {
+               font-size: 0.85rem;
+               color: #d1d5db;
+           }
+
+           .button-group {
+               text-align: center;
+               margin-top: 30px;
+           }
+
+           .btn-back {
+               padding: 12px 30px;
+               margin: 0 10px;
+               border-radius: 8px;
+               border: none;
+               background: linear-gradient(135deg, #22c55e, #16a34a);
+               color: #022c22;
+               font-weight: 600;
+               font-size: 1rem;
+               cursor: pointer;
+               transition: transform 0.2s ease, box-shadow 0.2s ease;
+               box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+           }
+
+           .btn-back:hover {
+               transform: translateY(-2px);
+               box-shadow: 0 6px 16px rgba(34, 197, 94, 0.5);
+           }
+
+           .btn-back:active { transform: translateY(0); }
+
+           @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+           @media (max-width: 768px) {
+               .results-grid { grid-template-columns: 1fr; }
+               .pipeline-flow { flex-direction: column; gap: 10px; }
+           }
+       </style> </head> <body> {% include '_nav.html' %} <div class="results-container"> <!-- Header --> <div class="results-header"> <h1>✅ Instruction Execution Results</h1> <p id="instruction-name">Instruction: <span id="instr-type"></span></p> </div> <!-- Pipeline Flow --> <div class="pipeline-flow"> <div class="pipeline-stage"> <strong>IF</strong> <span id="pipe-if">Instruction Fetch</span> </div> <div style="color: #22c55e;">→</div> <div class="pipeline-stage"> <strong>ID</strong> <span id="pipe-id">Instruction Decode</span> </div> <div style="color: #22c55e;">→</div> <div class="pipeline-stage"> <strong>EX</strong> <span id="pipe-ex">Execute</span> </div> <div style="color: #22c55e;">→</div> <div class="pipeline-stage"> <strong>MEM</strong> <span id="pipe-mem">Memory Access</span> </div> <div style="color: #22c55e;">→</div> <div class="pipeline-stage"> <strong>WB</strong> <span id="pipe-wb">Write Back</span> </div> </div> <!-- Results Grid --> <div class="results-grid"> <!-- Execution Results --> <div class="result-card"> <h2>⚙️ Execution Results</h2> <p><strong>Decimal Result:</strong> <span id="result-decimal">0</span></p> <p><strong>Binary Result:</strong> <span id="result-binary" class="binary-text">0</span></p> <p><strong>Machine Code:</strong></p> <p style="font-family: monospace; color: #60a5fa;" id="result-machine-code">0</p> <p id="result-branch" style="display: none;"><strong>Branch Status:</strong> <span id="branch-status"></span></p> </div> <!-- Register Values --> <div class="result-card"> <h2>📝 Register State</h2> <table> <thead> <tr> <th>Register</th> <th>Input Value</th> </tr> </thead> <tbody> <tr> <td>Rs</td> <td id="result-rs">0</td> </tr> <tr> <td>Rt</td> <td id="result-rt">0</td> </tr> <tr> <td>Rd (Result)</td> <td id="result-rd">0</td> </tr> </tbody> </table> </div> <!-- Memory State --> <div class="result-card" id="memory-container" style="display: none;"> <h2>💾 Memory State</h2> <table> <thead> <tr> <th>Address</th> <th>Value</th> </tr> </thead> <tbody id="memory-body"></tbody> </table> </div> <!-- Performance Metrics --> <div class="result-card"> <h2>📊 Performance Metrics</h2> <p><strong>Total Instructions:</strong> <span id="result-instr">0</span></p> <p><strong>Total Cycles:</strong> <span id="result-cycles">0</span></p> <p><strong>Stall Cycles:</strong> <span id="result-stalls">0</span></p> <p><strong>Branch Mispredictions:</strong> <span id="result-mispred">0</span></p> <p><strong>CPI:</strong> <span id="result-cpi">0</span></p> <p><strong>IPC:</strong> <span id="result-ipc">0</span></p> <p><strong>Throughput:</strong> <span id="result-throughput">0</span></p> </div> <!-- Expected vs Actual --> <div class="result-card"> <h2>✔️ Correctness Check</h2> <p><strong>Expected Result:</strong> <span id="result-expected">0</span></p> <p><strong>Status:</strong> <span id="result-status-badge" style="padding: 4px 8px; border-radius: 4px; font-weight: 600;">N/A</span></p> </div> <!-- Diagnosis --> <!-- Diagnosis --> <div class="result-card diagnosis-panel"> <h2>🔍 Error Diagnosis</h2> <div id="error-diagnosis-container"></div> <div class="diagnosis-text" id="result-diagnosis">Loading diagnosis...</div> </div> </div> <div class="result-card" id="pipeline-table-container" style="display:none;"> <h2>🧭 Cycle-by-Cycle Pipeline</h2> <table> <thead><tr><th>#</th><th>Op</th><th>IF</th><th>ID</th><th>EX</th><th>MEM</th><th>WB</th><th>Stalls</th></tr></thead> <tbody id="pipeline-table-body"></tbody> </table> </div> <div class="result-card" id="register-timeline-container" style="display:none;"> <h2>🧾 Register Timeline</h2> <table> <thead><tr><th>#</th><th>Op</th><th>Updated Regs</th></tr></thead> <tbody id="register-timeline-body"></tbody> </table> </div> <!-- Action Buttons --> <div class="button-group"> <button class="btn-back" onclick="goBackToSimulator()">← Back to Simulator</button> <button class="btn-back" onclick="window.print()" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🖨️ Print Results</button> </div> </div> <script>
+    // Retrieve results from sessionStorage
+    function loadResults() {
+        const data = sessionStorage.getItem('simulationResults');
+        if (!data) {
+            document.body.innerHTML = '<h1 style="text-align:center; margin-top:100px;">No results found. Return to simulator.</h1>';
+            return;
+        }
+        let results = JSON.parse(data);
+        console.log('Simulation Results:', results); // Debug log
+        let programSteps = null;
+        if (results.steps) {
+            programSteps = results.steps;
+            console.log('Program Steps Found:', programSteps.length); // Debug log
+            results = programSteps[programSteps.length - 1];
+            showProgramTable(programSteps);
+        }
+
+        document.getElementById('pipe-if').textContent = results.IF;
+        document.getElementById('pipe-id').textContent = results.ID;
+        document.getElementById('pipe-ex').textContent = results.EX;
+        document.getElementById('pipe-mem').textContent = results.MEM;
+        document.getElementById('pipe-wb').textContent = results.WB;
+
+        document.getElementById('instr-type').textContent = results.operation || '';
+        document.getElementById('result-decimal').textContent = results.result_decimal;
+        document.getElementById('result-binary').textContent = results.result_binary;
+        document.getElementById('result-machine-code').textContent = results.machine_code;
+
+        if (results.operation === 'BEQ' && results.branch_taken) {
+            document.getElementById('result-branch').style.display = 'block';
+            document.getElementById('branch-status').textContent = '✓ Branch Taken';
+            document.getElementById('branch-status').style.color = '#22c55e';
+        }
+
+        document.getElementById('result-rs').textContent = results.rs_value || results.rs || 0;
+        document.getElementById('result-rt').textContent = results.rt_value || results.rt || 0;
+        document.getElementById('result-rd').textContent = results.result_decimal;
+
+        // Display memory if available
+        const memoryContainer = document.getElementById('memory-container');
+        if (results.memory && Object.keys(results.memory).length > 0) {
+            memoryContainer.style.display = 'block';
+            const memoryBody = document.getElementById('memory-body');
+            memoryBody.innerHTML = '';
+            for (const [addr, val] of Object.entries(results.memory)) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${addr}</td><td>${val}</td>`;
+                memoryBody.appendChild(row);
+            }
+        } else {
+            memoryContainer.style.display = 'none';
+        }
+
+        document.getElementById('result-instr').textContent = results.total_instructions || 0;
+        document.getElementById('result-cycles').textContent = results.total_cycles || 0;
+        document.getElementById('result-stalls').textContent = results.stall_cycles || 0;
+        document.getElementById('result-mispred').textContent = results.branch_mispredictions || 0;
+        document.getElementById('result-cpi').textContent = (results.cpi || 0).toFixed(2);
+        document.getElementById('result-ipc').textContent = (results.ipc || 0).toFixed(2);
+        document.getElementById('result-throughput').textContent = (results.throughput || 0).toFixed(2);
+
+        document.getElementById('result-expected').textContent = results.expected_result;
+        const statusBadge = document.getElementById('result-status-badge');
+        if (results.diagnosis_status === 'Correct') {
+            statusBadge.textContent = '✅ Correct';
+            statusBadge.style.background = '#10b981';
+            statusBadge.style.color = '#022c22';
+        } else if (results.diagnosis_status) {
+            statusBadge.textContent = '❌ Incorrect';
+            statusBadge.style.background = '#ef4444';
+            statusBadge.style.color = '#fff';
+        } else {
+            statusBadge.textContent = '';
+        }
+
+        document.getElementById('result-diagnosis').textContent = results.diagnosis || '';
+    }
+
+    function showProgramTable(steps) {
+        const container = document.createElement('div');
+        container.className = 'result-card';
+        container.innerHTML = `
+            <h2>🧮 Program Steps</h2>
+            <table>
+                <thead><tr><th>#</th><th>Op</th><th>Rs Value</th><th>Rt Value</th><th>Result</th><th>Branch</th></tr></thead>
+                <tbody id="program-steps-body"></tbody>
+            </table>
+        `;
+        document.querySelector('.results-container').appendChild(container);
+        const tbody = container.querySelector('#program-steps-body');
+
+        steps.forEach((st, idx) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${idx+1}</td><td>${st.op || st.operation || ''}</td><td>${st.rs_value||st.rs||''}</td><td>${st.rt_value||st.rt||''}</td><td>${st.result_decimal||''}</td><td>${st.branch_taken ? '✔️' : ''}</td>`;
+            tr.addEventListener('click', () => highlightStep(idx));
+            tbody.appendChild(tr);
+        });
+
+        renderPipelineTable(steps);
+        renderRegisterTimeline(steps);
+    }
+
+    function renderPipelineTable(steps) {
+        const container = document.getElementById('pipeline-table-container');
+        const body = document.getElementById('pipeline-table-body');
+        if (!steps || steps.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+        container.style.display = 'block';
+        body.innerHTML = '';
+
+        steps.forEach((st, idx) => {
+            const row = document.createElement('tr');
+            const cycles = st.stage_cycles || {};
+            row.innerHTML = `<td>${idx+1}</td><td>${st.op || st.operation}</td><td>${cycles.IF||''}</td><td>${cycles.ID||''}</td><td>${cycles.EX||''}</td><td>${cycles.MEM||''}</td><td>${cycles.WB||''}</td><td>${st.stall_before || 0}</td>`;
+            row.dataset.stepIndex = idx;
+            row.addEventListener('click', () => highlightStep(idx));
+            body.appendChild(row);
+        });
+    }
+
+    function renderRegisterTimeline(steps) {
+        const container = document.getElementById('register-timeline-container');
+        const body = document.getElementById('register-timeline-body');
+        if (!steps || steps.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+        container.style.display = 'block';
+        body.innerHTML = '';
+
+        let previousRegs = new Array(32).fill(0);
+
+        steps.forEach((st, idx) => {
+            const regSnapshot = st.register_snapshot || previousRegs;
+            const changes = [];
+            for (let i = 0; i < 32; i++) {
+                if (regSnapshot[i] !== previousRegs[i]) {
+                    changes.push(`R${i}=${regSnapshot[i]}`);
+                }
+            }
+            previousRegs = regSnapshot.slice();
+
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${idx+1}</td><td>${st.op || st.operation}</td><td>${changes.join(', ') || 'No change'}</td>`;
+            body.appendChild(row);
+        });
+    }
+
+    function highlightStep(stepIndex) {
+        const pipelineBody = document.getElementById('pipeline-table-body');
+        Array.from(pipelineBody.children).forEach((row, idx) => {
+            row.style.background = idx === stepIndex ? 'rgba(34, 197, 94, 0.25)' : 'transparent';
+        });
+
+        const stepsBody = document.querySelector('#program-steps-body');
+        Array.from(stepsBody.children).forEach((row, idx) => {
+            row.style.background = idx === stepIndex ? 'rgba(34, 197, 94, 0.25)' : 'transparent';
+        });
+    }
+
+    function goBackToSimulator() {
+        window.location.href = '/selection';
+    }
+
+    window.addEventListener('DOMContentLoaded', loadResults);
+</script>
+<script src="{{ url_for('static', filename='js/error-diagnosis.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+            </body>
+</html>
+

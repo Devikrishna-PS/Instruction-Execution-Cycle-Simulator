@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Group Instruction Output</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/timeline-table.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/error-diagnosis.css') }}">
+    <style>
+        body { background: linear-gradient(145deg, #050c1b, #0b1228); color: #e2e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; }
+        .page-wrap { max-width: 1200px; margin: 20px auto; padding: 22px; }
+        .card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(96, 165, 250, 0.3); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); margin-bottom: 18px; padding: 18px; }
+        .card h1, .card h2 { margin: 0 0 10px; color: #60a5fa; }
+        .instructions-list { list-style: decimal; margin: 0; padding-left: 22px; }
+        .metrics-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+        .metric-item { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(96, 165, 250, 0.3); border-radius: 10px; padding: 10px 14px; min-width: 140px; }
+        .metric-item strong { color: #60a5fa; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid rgba(148, 163, 184, 0.3); padding: 8px; text-align: center; }
+        th { background: rgba(30, 58, 138, 0.4); color: #7dd3fc; }
+        td { background: rgba(15, 23, 42, 0.65); }
+        td.stage-if { background: rgba(59, 130, 246, 0.22); }
+        td.stage-id { background: rgba(34, 211, 238, 0.24); }
+        td.stage-ex { background: rgba(16, 185, 129, 0.24); }
+        td.stage-mem { background: rgba(250, 204, 21, 0.25); }
+        td.stage-wb { background: rgba(168, 85, 247, 0.22); }
+        td.stage-stall { background: rgba(239, 68, 68, 0.25); color: #fecaca; font-weight: 700; }
+        .trace-table th, .trace-table td { font-size: 0.92rem; }
+        .register-updates ul { margin: 0; ul, li { padding:0; } }
+
+       
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-weight: 600; }
+        .status-true { background: #22c55e; color: #022c22; }
+        .status-false { background: #ef4444; color: #fff; }
+        .btns { margin-top: 18px; }
+        .btn { border: 1px solid rgba(96, 165, 250, 0.35); border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #60a5fa); color: #fff; padding: 10px 16px; text-decoration: none; font-weight: 600; margin-right: 8px; cursor: pointer; }
+        .btn:hover { filter: brightness(1.08); }
+        @media (max-width: 1024px) { .metrics-grid { justify-content: center; } }
+        @media (max-width: 768px) { .page-wrap { padding: 14px; } table { font-size: 0.78rem; } }
+    </style>
+</head>
+<body>
+    {% include '_nav.html' %}
+    <div class="page-wrap">
+        <div class="card">
+            <h1>Group Instruction Execution Summary</h1>
+            <p>This view demonstrates a pipelined run for program mode with hazards, stalls, and performance metrics.</p>
+        </div>
+
+        <div class="card" id="instruction-list-card">
+            <h2>Program Instruction List</h2>
+            <ol id="instruction-list" class="instructions-list"></ol>
+        </div>
+
+        <div class="card" id="pipeline-summary-card">
+            <h2>Pipeline Summary</h2>
+            <ul style="list-style: none; padding-left: 0; color: #cbd5e1; margin: 0;">
+                <li>Total Instructions: <span id="summary-total-instr">0</span></li>
+                <li>Pipeline Depth: <span id="summary-depth">5</span> stages</li>
+                <li>Stalls inserted: <span id="summary-stalls">0</span></li>
+                <li>Reason: <span id="summary-reason">None</span></li>
+                <li>Final Output (last instruction result): <strong id="summary-final-output">0</strong></li>
+            </ul>
+        </div>
+
+        <div class="card" id="metrics-card">
+            <h2>Performance Metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric-item"><strong>Total Instructions</strong><div id="metric-total-instr">0</div></div>
+                <div class="metric-item"><strong>Total Cycles</strong><div id="metric-total-cycles">0</div></div>
+                <div class="metric-item"><strong>CPI</strong><div id="metric-cpi">0</div></div>
+                <div class="metric-item"><strong>IPC</strong><div id="metric-ipc">0</div></div>
+                <div class="metric-item"><strong>Stall Cycles</strong><div id="metric-stalls">0</div></div>
+                <div class="metric-item"><strong>Branch Mispredictions</strong><div id="metric-mispredictions">0</div></div>
+            </div>
+        </div>
+
+        <!-- NEW: Timeline Table Visualization -->
+        <div class="card">
+    <h2>📊 Pipeline Timeline View</h2>
+    <p style="color: #cbd5e1; font-size: 0.9rem; margin: 10px 0;">
+        Visualize instruction flow through pipeline stages across clock cycles. 
+        Highlighted areas show hazards and stalls.
+    </p>
+
+        <div id="timeline-table-container"></div>
+    
+</div>
+
+        <div class="card">
+            <h2>Cycle-by-Cycle Pipeline Table</h2>
+            <div style="overflow-x:auto;">
+                <table id="pipeline-table"></table>
+            </div>
+            <div style="margin-top: 12px; color: #cbd5e1;">
+                <strong>Hazard Explanation:</strong>
+                <p id="hazard-explanation">No data hazards detected yet.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Execution Trace</h2>
+            <table class="trace-table" id="trace-table">
+                <thead><tr><th>#</th><th>Op</th><th>rs</th><th>rt</th><th>rd</th><th>result</th><th>branch</th><th>pc after</th><th>Machine Code</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="card register-updates">
+            <h2>Register State Updates</h2>
+            <ul id="register-updates"></ul>
+        </div>
+
+        <div class="btns">
+            <button class="btn" onclick="window.location.href='/program'">← Back to Program</button>
+            <button class="btn" onclick="window.location.href='/selection'">← Mode Selection</button>
+            <button class="btn" onclick="window.location.href='/results'">Single-Instruction Mode</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/group_output.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/timeline-table.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+</body>
+</html>

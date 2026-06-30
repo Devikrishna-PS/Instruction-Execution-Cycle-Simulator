@@ -1,0 +1,325 @@
+/* Error Diagnosis Card Styling */
+
+.error-diagnosis-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.7), rgba(10, 15, 28, 0.9));
+    border: 2px solid rgba(96, 165, 250, 0.3);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.error-diagnosis-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ef4444, #f87171, #ef4444);
+    animation: pulse-indicator 2s infinite;
+}
+
+/* Success variant */
+.error-diagnosis-card.success {
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.error-diagnosis-card.success::before {
+    background: linear-gradient(90deg, #22c55e, #4ade80, #22c55e);
+}
+
+/* Warning variant */
+.error-diagnosis-card.warning {
+    border-color: rgba(250, 204, 21, 0.3);
+}
+
+.error-diagnosis-card.warning::before {
+    background: linear-gradient(90deg, #fbbf24, #fcd34d, #fbbf24);
+}
+
+/* Header */
+.error-diagnosis-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.error-diagnosis-icon {
+    font-size: 2rem;
+    min-width: 2rem;
+}
+
+.error-diagnosis-title {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #60a5fa;
+}
+
+.error-diagnosis-card.success .error-diagnosis-title {
+    color: #10b981;
+}
+
+.error-diagnosis-card.warning .error-diagnosis-title {
+    color: #f59e0b;
+}
+
+.error-diagnosis-card.error .error-diagnosis-title {
+    color: #ef4444;
+}
+
+/* Content sections */
+.error-diagnosis-section {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(96, 165, 250, 0.1);
+}
+
+.error-diagnosis-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.error-diagnosis-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #60a5fa;
+    margin-bottom: 6px;
+}
+
+.error-diagnosis-card.success .error-diagnosis-label {
+    color: #10b981;
+}
+
+.error-diagnosis-card.warning .error-diagnosis-label {
+    color: #f59e0b;
+}
+
+.error-diagnosis-card.error .error-diagnosis-label {
+    color: #ef4444;
+}
+
+.error-diagnosis-value {
+    font-size: 1rem;
+    color: #cbd5e1;
+    font-family: 'Monaco', monospace;
+    font-weight: 500;
+    background: rgba(30, 41, 59, 0.6);
+    padding: 10px 12px;
+    border-radius: 6px;
+    border-left: 3px solid rgba(96, 165, 250, 0.3);
+}
+
+.error-diagnosis-card.success .error-diagnosis-value {
+    border-left-color: rgba(34, 197, 94, 0.3);
+}
+
+.error-diagnosis-card.warning .error-diagnosis-value {
+    border-left-color: rgba(250, 204, 21, 0.3);
+}
+
+.error-diagnosis-card.error .error-diagnosis-value {
+    border-left-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Difference display */
+.error-diagnosis-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.error-diagnosis-expected,
+.error-diagnosis-actual {
+    padding: 12px;
+    border-radius: 6px;
+    background: rgba(30, 41, 59, 0.6);
+}
+
+.error-diagnosis-expected {
+    border-left: 3px solid #10b981;
+}
+
+.error-diagnosis-actual {
+    border-left: 3px solid #ef4444;
+}
+
+.error-diagnosis-expected::before {
+    content: '✓ Expected';
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #10b981;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.error-diagnosis-actual::before {
+    content: '✗ Got';
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ef4444;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.error-diagnosis-expected-value,
+.error-diagnosis-actual-value {
+    font-family: 'Monaco', monospace;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.error-diagnosis-expected-value {
+    color: #86efac;
+}
+
+.error-diagnosis-actual-value {
+    color: #fca5a5;
+}
+
+/* Reason section */
+.error-diagnosis-reason {
+    background: rgba(30, 41, 59, 0.4);
+    border-left: 4px solid rgba(96, 165, 250, 0.3);
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+.error-diagnosis-card.success .error-diagnosis-reason {
+    border-left-color: rgba(34, 197, 94, 0.3);
+}
+
+.error-diagnosis-card.warning .error-diagnosis-reason {
+    border-left-color: rgba(250, 204, 21, 0.3);
+}
+
+.error-diagnosis-card.error .error-diagnosis-reason {
+    border-left-color: rgba(239, 68, 68, 0.3);
+}
+
+.error-diagnosis-reason-text {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+/* Status badge */
+.error-diagnosis-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+.error-diagnosis-status.error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.error-diagnosis-status.success {
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.error-diagnosis-status.warning {
+    background: rgba(250, 204, 21, 0.2);
+    color: #fcd34d;
+    border: 1px solid rgba(250, 204, 21, 0.3);
+}
+
+/* Animations */
+@keyframes pulse-indicator {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes slideInTop {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-diagnosis-card {
+    animation: slideInTop 0.4s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .error-diagnosis-card {
+        padding: 16px;
+    }
+
+    .error-diagnosis-comparison {
+        grid-template-columns: 1fr;
+    }
+
+    .error-diagnosis-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* Light theme override */
+[data-theme="light"] .error-diagnosis-card {
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 250, 0.95));
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="light"] .error-diagnosis-value,
+[data-theme="light"] .error-diagnosis-expected,
+[data-theme="light"] .error-diagnosis-actual,
+[data-theme="light"] .error-diagnosis-reason {
+    background: rgba(241, 245, 250, 0.6);
+}
+
+[data-theme="light"] .error-diagnosis-value {
+    color: #1e293b;
+    border-left-color: rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="light"] .error-diagnosis-label {
+    color: #2563eb;
+}
+
+[data-theme="light"] .error-diagnosis-title {
+    color: #2563eb;
+}
+
+[data-theme="light"] .error-diagnosis-reason-text {
+    color: #475569;
+}
+
+[data-theme="light"] .error-diagnosis-expected-value {
+    color: #059669;
+}
+
+[data-theme="light"] .error-diagnosis-actual-value {
+    color: #dc2626;
+}

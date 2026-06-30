@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Mode Selection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <style>
+        .selection-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .selection-title {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: #60a5fa;
+        }
+        .option-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .option-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .option-card:hover {
+            transform: translateY(-5px);
+            border-color: #22c55e;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+        }
+        .option-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .option-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #60a5fa;
+        }
+        .option-description {
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+        .back-button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #022c22;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            .option-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include '_nav.html' %}
+
+    <div class="main-content">
+        <div class="content-section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <h1 class="section-title">Simulation Mode Selection</h1>
+            </div>
+        <h1 class="selection-title">Choose Your Simulation Mode</h1>
+
+        <div class="option-grid">
+            <div class="option-card" onclick="window.location.href='/single_instruction'">
+                <span class="option-icon">🔸</span>
+                <h2 class="option-title">Single Instruction</h2>
+                <p class="option-description">
+                    Simulate one instruction at a time. Perfect for understanding the pipeline stages and instruction execution in detail.
+                </p>
+            </div>
+
+            <div class="option-card" onclick="window.location.href='/program'">
+                <span class="option-icon">📋</span>
+                <h2 class="option-title">Group of Instructions</h2>
+                <p class="option-description">
+                    Execute multiple instructions sequentially. Ideal for running programs and analyzing performance metrics.
+                </p>
+            </div>
+            </div>
+        </div>
+
+        <div class="btn-group" style="justify-content: center; margin-top: 40px;">
+            <button class="btn btn-secondary" onclick="window.location.href='/execution'">
+                <span>←</span> Back to Execution
+            </button>
+        </div>
+    </div>
+</div>
+
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+</body>
+</html>

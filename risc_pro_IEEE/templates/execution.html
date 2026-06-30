@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Instruction Execution</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/execution.css') }}">
+</head>
+<body>
+
+<!-- TOP SECTION -->
+<div class="container">
+
+    <!-- LEFT -->
+    <div class="left-section">
+        <h1>
+            Watch an instruction <br>
+            <span class="highlight">fly through</span> the <br>
+            Single-Cycle RISC pipeline.
+        </h1>
+
+        <p class="description">
+            In a Single-Cycle RISC Processor, every instruction completes its entire journey — from memory to registers and back — in just
+             <span class="blue">one</span> 
+             clock tick. Explore how the 5 classic stages cooperate to make that happen.
+        </p>
+
+        <div class="flow">
+            Memory → <span>Pipeline</span> → Registers
+        </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-section">
+        <div class="pipeline-card">
+
+            <h2>Instruction Execution Cycle</h2>
+
+            <p class="pipeline-caption">
+                Click a stage or 
+                <button class="inline-play" id="pipeline-play">▶ Auto-play</button>
+            </p>
+
+            <div class="pipeline-diagram">
+                <div class="pipe-node" data-step="0">IF<span>Fetch</span></div>
+                <div class="pipe-arrow"></div>
+                <div class="pipe-node" data-step="1">ID<span>Decode</span></div>
+                <div class="pipe-arrow"></div>
+                <div class="pipe-node" data-step="2">EX<span>Execute</span></div>
+                <div class="pipe-arrow"></div>
+                <div class="pipe-node" data-step="3">MEM<span>Memory</span></div>
+                <div class="pipe-arrow"></div>
+                <div class="pipe-node" data-step="4">WB<span>Write Back</span></div>
+            </div>
+
+            <div class="pipeline-desc">
+                <strong class="pipeline-desc-title">Instruction Fetch</strong>
+                <p class="pipeline-desc-text">Fetch instruction using PC.</p>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- CARDS BELOW -->
+<div class="stage-grid">
+    <div class="card"><div class="circle">IF</div><h3>Fetch</h3><p>Fetch instruction bits from memory using the Program Counter (PC).</p></div>
+    <div class="card"><div class="circle">ID</div><h3>Decode</h3><p>Decode opcode, read registers, and prepare control signals.</p></div>
+    <div class="card"><div class="circle">EX</div><h3>Execute</h3><p>Perform the actual operation specified by the instruction.</p></div>
+    <div class="card"><div class="circle">MEM</div><h3>Memory</h3><p>Access memory if the instruction requires it.</p></div>
+    <div class="card"><div class="circle">WB</div><h3>Write Back</h3><p>Write the result back to the register file.</p></div>
+</div>
+
+<!-- BUTTON -->
+<div class="cta-container">
+    <button onclick="window.location.href='/selection'" class="start-btn">
+        Start Interactive Simulation →
+    </button>
+</div>
+
+<script src="{{ url_for('static', filename='js/execution.js') }}"></script>
+
+</body>
+</html>

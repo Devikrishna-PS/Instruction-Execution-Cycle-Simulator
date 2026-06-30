@@ -1,0 +1,103 @@
+/* Theme Variables */
+:root {
+    --bg-primary: linear-gradient(135deg, #0f172a, #0a0f1c);
+    --bg-secondary: #1e293b;
+    --bg-card: rgba(30, 41, 59, 0.8);
+    --text-primary: #ffffff;
+    --text-secondary: #e2e8f0;
+    --text-muted: #94a3b8;
+    --accent: #60a5fa;
+    --accent-hover: #3b82f6;
+    --border: rgba(255, 255, 255, 0.1);
+    --shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* Light Theme */
+[data-theme="light"] {
+    --bg-primary: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    --bg-secondary: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --border: rgba(0, 0, 0, 0.1);
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Theme (Default) */
+[data-theme="dark"] {
+    --bg-primary: linear-gradient(135deg, #0f172a, #0a0f1c);
+    --bg-secondary: #1e293b;
+    --bg-card: rgba(30, 41, 59, 0.8);
+    --text-primary: #ffffff;
+    --text-secondary: #e2e8f0;
+    --text-muted: #94a3b8;
+    --accent: #60a5fa;
+    --accent-hover: #3b82f6;
+    --border: rgba(255, 255, 255, 0.1);
+    --shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* Apply theme variables */
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.navbar {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+}
+
+[data-theme="light"] .navbar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+}
+
+.nav-link {
+    color: var(--text-secondary);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--accent);
+}
+
+.dashboard-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 10px var(--shadow);
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 8px 20px var(--shadow);
+}
+
+.dashboard-card h3 {
+    color: var(--text-secondary);
+}
+
+.dashboard-card table th {
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+}
+
+.dashboard-card table td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .dashboard-card table td {
+    border-bottom: 1px solid var(--border);
+}
+
+.log-content {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .log-content {
+    background: rgba(255, 255, 255, 0.2);
+}

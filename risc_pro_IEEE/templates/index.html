@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Program Execution Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/code-editor.css') }}">
+</head>
+<body>
+{% include '_nav.html' %}
+
+<div class="main-content">
+    <div class="content-section">
+        <div class="section-header">
+            <span class="section-icon">💻</span>
+            <h1 class="section-title">Program Execution</h1>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Enter Instruction Set:</label>
+            
+            <!-- Styled Code Editor -->
+            <div class="code-editor-wrapper">
+                <div class="code-editor-header">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">program.asm</span>
+                </div>
+                <div class="code-editor-body">
+                    <div class="code-line-numbers" id="lineNumbers"></div>
+                    <textarea id="programInput" class="code-editor-textarea" placeholder="ADD R1 R2 R3
+SUB R4 R1 R5
+LW R6 0(R2)
+SW R6 4(R3)
+BEQ R1 R2 8"></textarea>
+                </div>
+                <div class="code-error-message" id="codeErrorMsg"></div>
+                <div class="code-success-message" id="codeSuccessMsg"></div>
+            </div>
+            
+            <!-- Code Editor Toolbar -->
+            <div class="code-editor-toolbar">
+                <button type="button" class="code-editor-action-btn" id="runProgramButton" onclick="runProgram();">
+                    <span>▶️</span> Run Program
+                </button>
+                <button type="button" class="code-editor-action-btn secondary" id="sampleProgramButton" onclick="loadSampleProgram();">
+                    <span>📝</span> Load Sample
+                </button>
+                <button type="button" class="code-editor-action-btn secondary" id="clearProgramButton" onclick="clearProgram();">
+                    <span>🗑️</span> Clear
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Initial Register Grid (R0-R31):</label>
+            <p style="font-size:0.9rem; color:var(--text-muted); margin:5px 0;">Only registers referenced in your instruction set are editable; others remain static.</p>
+            <div id="register-table-container" style="display:none; max-height: 380px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: var(--bg-secondary);">
+                <div id="register-grid" style="display:grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 8px;"></div>
+            </div>
+        </div>
+
+        <div class="status-message status-info">Program not executed.</div>
+        <div id="programStatus" class="status-message status-info" style="display: none;"></div>
+        <div id="programError" class="status-message status-error" style="display: none;"></div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/program.js') }}"></script>
+<script src="{{ url_for('static', filename='js/code-editor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+</body>
+</html>

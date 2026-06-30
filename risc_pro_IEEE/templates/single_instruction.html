@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Single Instruction Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/simulator.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+</head>
+<body>
+{% include '_nav.html' %}
+
+<!-- CONTROL PANEL -->
+<div class="control-panel">
+    <div class="config-panel">
+        <h3>Instruction Configuration</h3>
+        <div class="form-group">
+            <label>Instruction Type:</label>
+            <select id="instrType">
+                <option value="ADD">ADD</option>
+                <option value="SUB">SUB</option>
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+                <option value="SLT">SLT (Set Less Than)</option>
+                <option value="BEQ">BEQ (Branch Equal)</option>
+                <option value="LW">LW (Load Word)</option>
+                <option value="SW">SW (Store Word)</option>
+            </select>
+        </div>
+        <!-- register inputs arranged in a row -->
+        <div class="register-row">
+            <div class="form-group">
+                <label for="rsValue">Rs value:</label>
+                <input type="number" id="rsValue" value="5" placeholder="Value" min="0" step="1">
+            </div>
+            <div class="form-group">
+                <label for="rtValue">Rt value:</label>
+                <input type="number" id="rtValue" value="3" placeholder="Value" min="0" step="1">
+            </div>
+        </div>
+        <!-- optional metrics inputs -->
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="stallFlag"> Simulate Stall Cycle</label>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="predBranch"> Predicted Branch Taken</label>
+        </div>
+        <div class="button-group">
+            <button id="runButton" class="btn-primary">Run Instruction</button>
+            <button id="resetButton" class="btn-secondary">Reset Simulation</button>
+            <button id="resetMetricsButton" class="btn-secondary">Reset Metrics</button>
+            <button onclick="toggleTheme()" class="btn-secondary">Toggle Theme</button>
+        </div>
+    </div>
+</div>
+
+<!-- EXECUTION VISUALIZATION -->
+<div class="execution-container">
+    <div class="left-panel">
+        <!-- PIPELINE VISUALIZATION -->
+        <div class="visualizer">
+            <h3>Pipeline Flow</h3>
+            <div class="node" id="step-if">IF <small id="label-if">Waiting...</small></div>
+            <div class="line"></div>
+            <div class="node" id="step-id">ID <small id="label-id">Waiting...</small></div>
+            <div class="line"></div>
+            <div class="node" id="step-ex">EX <small id="label-ex">Waiting...</small></div>
+            <div class="line"></div>
+            <div class="node" id="step-mem">MEM <small id="label-mem">Waiting...</small></div>
+            <div class="line"></div>
+            <div class="node" id="step-wb">WB <small id="label-wb">Waiting...</small></div>
+        </div>
+        <div id="status-box">System Idle.</div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/clock.js') }}"></script>
+<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/simulator.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+</body>
+</html>
