@@ -807,10 +807,5 @@ def run_program():
 # -------------------------------
 # Run App
 
-def open_browser():
-    webbrowser.open_new("http://127.0.0.1:5000/")
-
-if __name__ == '__main__':
-    if not os.environ.get("WERKZEUG_RUN_MAIN"):
-        Timer(1.5, open_browser).start()
-    app.run(debug=True) 
+if __name__ == "__main__":
+    app.run()
